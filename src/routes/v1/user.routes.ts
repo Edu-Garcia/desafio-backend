@@ -5,8 +5,6 @@ import {
   getUsersHandler,
   updateUserHandler,
 } from '../../controllers/user.controller';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import requireUser from '../../middlewares/requireUser';
 import validateResource from '../../middlewares/validateResource';
 
 import {
@@ -45,11 +43,7 @@ const routes = Router();
 routes
   .route('/')
   .get(getUsersHandler)
-  .post(
-    // [requireUser, validateResource(createUserSchema)],
-    [validateResource(createUserSchema)],
-    createUserHandler
-  );
+  .post([validateResource(createUserSchema)], createUserHandler);
 
 routes
   .route('/:userId')

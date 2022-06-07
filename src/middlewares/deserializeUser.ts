@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { get } from 'lodash';
 import { verifyJwt } from '../utils/jwt.utils';
 
@@ -24,7 +25,7 @@ const deserializeUser = async (
   }
 
   if (expired) {
-    return res.sendStatus(401);
+    return res.sendStatus(StatusCodes.UNAUTHORIZED);
   }
 
   return next();

@@ -12,6 +12,7 @@ import {
   getUsers,
   updateUser,
 } from '../services/user.service';
+import ApiError from '../utils/apiError.utils';
 
 export async function getUsersHandler(req: Request, res: Response) {
   const users = await getUsers();
@@ -24,21 +25,19 @@ export async function createUserHandler(
   res: Response
 ) {
   const { body } = req;
+  const { sub: requesterId } = res.locals.user;
 
-  const user = await createUser({ ...body });
+  try {
+    const user = await createUser({ requesterId, ...body });
 
-  res.status(StatusCodes.CREATED).json(user);
-}
-
-export async function deleteUserHandler(
-  req: Request<DeleteUserInput['params']>,
-  res: Response
-) {
-  const { userId } = req.params;
-
-  await deleteUser(userId);
-
-  res.sendStatus(StatusCodes.NO_CONTENT);
+    res.status(StatusCodes.CREATED).json(user);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      res.status(error.statusCode).json(error.message);
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
 }
 
 export async function updateUserHandler(
@@ -46,10 +45,38 @@ export async function updateUserHandler(
   res: Response
 ) {
   const { body, params } = req;
-
   const { userId: id } = params;
+  const { sub: requesterId } = res.locals.user;
 
-  const user = await updateUser({ id, ...body });
+  try {
+    const user = await updateUser({ requesterId, id, ...body });
 
-  res.status(StatusCodes.OK).json(user);
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      res.status(error.statusCode).json(error.message);
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
+}
+
+export async function deleteUserHandler(
+  req: Request<DeleteUserInput['params']>,
+  res: Response
+) {
+  const { userId } = req.params;
+  const { sub: requesterId } = res.locals.user;
+
+  try {
+    await deleteUser(requesterId, userId);
+
+    res.sendStatus(StatusCodes.NO_CONTENT);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      res.status(error.statusCode).json(error.message);
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
 }

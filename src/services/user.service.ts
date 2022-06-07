@@ -13,9 +13,22 @@ export async function getUsers(): Promise<UserEntity[]> {
 }
 
 export async function createUser(input: CreateUserInput): Promise<UserEntity> {
-  const { password, cpf } = input;
+  const { requesterId, password, cpf } = input;
 
   const repository = getRepository(UserEntity);
+
+  const requesterAdmin = await repository.findOne({
+    id: requesterId,
+    permission: 'admin',
+  });
+
+  if (!requesterAdmin) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      true,
+      'Only admins can create users'
+    );
+  }
 
   const cpfExists = await repository.findOne({ cpf });
 
@@ -36,9 +49,23 @@ export async function createUser(input: CreateUserInput): Promise<UserEntity> {
 }
 
 export async function updateUser(input: UpdateUserInput): Promise<UserEntity> {
-  const { id, observations, permission } = input;
+  const { requesterId, id, observations, permission } = input;
 
   const repository = getRepository(UserEntity);
+
+  const requesterAdmin = await repository.findOne({
+    id: requesterId,
+    permission: 'admin',
+  });
+
+  if (!requesterAdmin) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      true,
+      'Only admins can update users'
+    );
+  }
+
   const user = await repository.findOne(id);
 
   if (!user) {
@@ -52,8 +79,25 @@ export async function updateUser(input: UpdateUserInput): Promise<UserEntity> {
   return user;
 }
 
-export async function deleteUser(id: string): Promise<void> {
+export async function deleteUser(
+  requesterId: string,
+  id: string
+): Promise<void> {
   const repository = getRepository(UserEntity);
+
+  const requesterAdmin = await repository.findOne({
+    id: requesterId,
+    permission: 'admin',
+  });
+
+  if (!requesterAdmin) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      true,
+      'Only admins can delete users'
+    );
+  }
+
   const user = await repository.findOne(id);
 
   if (!user) {

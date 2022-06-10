@@ -12,6 +12,12 @@ export async function getUsers(): Promise<UserEntity[]> {
   return users;
 }
 
+export async function getUser(id: string): Promise<UserEntity | undefined> {
+  const repository = getRepository(UserEntity);
+  const user = repository.findOne(id);
+  return user;
+}
+
 export async function createUser(input: CreateUserInput): Promise<UserEntity> {
   const { requesterId, password, cpf } = input;
 

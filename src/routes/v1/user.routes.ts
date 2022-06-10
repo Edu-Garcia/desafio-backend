@@ -10,6 +10,7 @@ import validateResource from '../../middlewares/validateResource';
 import {
   createUserSchema,
   deleteUserSchema,
+  getUserSchema,
   updateUserSchema,
 } from '../../schemas/user.schema';
 
@@ -47,6 +48,7 @@ routes
 
 routes
   .route('/:userId')
+  .get([validateResource(getUserSchema)], deleteUserHandler)
   .delete([validateResource(deleteUserSchema)], deleteUserHandler)
   .put([validateResource(updateUserSchema)], updateUserHandler);
 

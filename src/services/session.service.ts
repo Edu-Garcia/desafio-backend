@@ -11,9 +11,9 @@ export async function createSession({
   password,
 }: Session): Promise<SessionResponse> {
   const repository = getRepository(UserEntity);
-  const user = await repository.findOne({ cpf });
+  const userSession = await repository.findOne({ cpf });
 
-  if (!user) {
+  if (!userSession) {
     throw new ApiError(
       StatusCodes.UNAUTHORIZED,
       true,
@@ -21,7 +21,7 @@ export async function createSession({
     );
   }
 
-  const passwordConfirmed = await compare(password, user.password);
+  const passwordConfirmed = await compare(password, userSession.password);
 
   if (!passwordConfirmed) {
     throw new ApiError(
@@ -31,7 +31,12 @@ export async function createSession({
     );
   }
 
-  const token = signJwt({}, { subject: user.id });
+  const user = {
+    id: userSession.id,
+    permission: userSession.permission,
+  };
 
-  return { token };
+  const token = signJwt({}, { subject: userSession.id });
+
+  return { token, user };
 }

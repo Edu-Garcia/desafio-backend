@@ -5,4 +5,8 @@ export interface Session {
 
 export interface SessionResponse {
   token: string;
+  user: {
+    id: string;
+    permission: string;
+  };
 }

@@ -3,12 +3,14 @@ import { StatusCodes } from 'http-status-codes';
 import {
   CreateUserInput,
   DeleteUserInput,
+  ReadUserInput,
   UpdateUserInput,
 } from '../schemas/user.schema';
 
 import {
   createUser,
   deleteUser,
+  getUser,
   getUsers,
   updateUser,
 } from '../services/user.service';
@@ -18,6 +20,18 @@ export async function getUsersHandler(req: Request, res: Response) {
   const users = await getUsers();
 
   res.status(StatusCodes.OK).json(users);
+}
+
+export async function getUserHandler(
+  req: Request<ReadUserInput['params']>,
+  res: Response
+) {
+  const { params } = req;
+  const { userId: id } = params;
+
+  const user = await getUser(id);
+
+  res.status(StatusCodes.OK).json(user);
 }
 
 export async function createUserHandler(

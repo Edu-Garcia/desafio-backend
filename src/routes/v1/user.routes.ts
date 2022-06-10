@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createUserHandler,
   deleteUserHandler,
+  getUserHandler,
   getUsersHandler,
   updateUserHandler,
 } from '../../controllers/user.controller';
@@ -48,7 +49,7 @@ routes
 
 routes
   .route('/:userId')
-  .get([validateResource(getUserSchema)], deleteUserHandler)
+  .get([validateResource(getUserSchema)], getUserHandler)
   .delete([validateResource(deleteUserSchema)], deleteUserHandler)
   .put([validateResource(updateUserSchema)], updateUserHandler);
 

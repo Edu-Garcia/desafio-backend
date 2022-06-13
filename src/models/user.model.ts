@@ -11,7 +11,6 @@ export interface User {
 }
 
 export interface CreateUserInput {
-  requesterId: string;
   name: string;
   password: string;
   birth_date: Date;
@@ -21,7 +20,6 @@ export interface CreateUserInput {
 }
 
 export interface UpdateUserInput {
-  requesterId: string;
   id: string;
   observations?: string;
   permission?: string;

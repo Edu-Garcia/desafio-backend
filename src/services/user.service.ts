@@ -5,6 +5,7 @@ import config from '../config/config';
 import UserEntity from '../database/entities/User.Entity';
 import { CreateUserInput, UpdateUserInput } from '../models/user.model';
 import ApiError from '../utils/apiError.utils';
+import { calculateAge } from '../utils/calculateAge';
 
 export async function getUsers(): Promise<UserEntity[]> {
   const repository = getRepository(UserEntity);
@@ -14,7 +15,7 @@ export async function getUsers(): Promise<UserEntity[]> {
 
 export async function getUser(id: string): Promise<UserEntity | undefined> {
   const repository = getRepository(UserEntity);
-  const user = repository.findOne(id);
+  const user = repository.findOne({ id });
 
   if (!user) {
     throw new ApiError(StatusCodes.NOT_FOUND, true, 'User not found');
@@ -23,8 +24,12 @@ export async function getUser(id: string): Promise<UserEntity | undefined> {
   return user;
 }
 
-export async function createUser(input: CreateUserInput): Promise<UserEntity> {
-  const { requesterId, password, cpf } = input;
+export async function createUser(
+  requesterId: string,
+  input: CreateUserInput
+): Promise<UserEntity> {
+  const { password, cpf } = input;
+  let { birth_date: birthDate } = input;
 
   const repository = getRepository(UserEntity);
 
@@ -39,6 +44,24 @@ export async function createUser(input: CreateUserInput): Promise<UserEntity> {
       true,
       'Only admins can create users'
     );
+  }
+
+  if (Object.prototype.toString.call(birthDate) !== '[object Date]') {
+    birthDate = new Date(birthDate);
+  }
+
+  const userAge = calculateAge(birthDate);
+
+  if (userAge < 18) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      true,
+      'Users must be at least 18 years old'
+    );
+  }
+
+  if (userAge > 200) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, true, 'Invalid birth date');
   }
 
   const cpfExists = await repository.findOne({ cpf });
@@ -59,8 +82,11 @@ export async function createUser(input: CreateUserInput): Promise<UserEntity> {
   return newUser;
 }
 
-export async function updateUser(input: UpdateUserInput): Promise<UserEntity> {
-  const { requesterId, id, observations, permission } = input;
+export async function updateUser(
+  requesterId: string,
+  input: UpdateUserInput
+): Promise<UserEntity> {
+  const { id, observations, permission } = input;
 
   const repository = getRepository(UserEntity);
 
@@ -77,7 +103,7 @@ export async function updateUser(input: UpdateUserInput): Promise<UserEntity> {
     );
   }
 
-  const user = await repository.findOne(id);
+  const user = await repository.findOne({ id });
 
   if (!user) {
     throw new ApiError(StatusCodes.NOT_FOUND, true, 'User not found');
@@ -109,7 +135,7 @@ export async function deleteUser(
     );
   }
 
-  const user = await repository.findOne(id);
+  const user = await repository.findOne({ id });
 
   if (!user) {
     throw new ApiError(StatusCodes.NOT_FOUND, true, 'User not found');

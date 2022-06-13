@@ -1,10 +1,9 @@
 import supertest from 'supertest';
-import app from '../../src/index';
+import app from '../../src/app';
 
 describe('App', () => {
-  it('should return hello world', async () => {
-    const { text, status } = await supertest(app).get('/');
-    expect(status).toBe(200);
-    expect(text).toBe('Hello world');
+  it('should return status 200', async () => {
+    const response = await supertest(app).get('/api/healthcheck');
+    expect(response.statusCode).toBe(200);
   });
 });

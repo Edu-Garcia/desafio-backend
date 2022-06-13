@@ -42,7 +42,7 @@ export async function createUserHandler(
   const { sub: requesterId } = res.locals.user;
 
   try {
-    const user = await createUser({ requesterId, ...body });
+    const user = await createUser(requesterId, { ...body });
 
     res.status(StatusCodes.CREATED).json(user);
   } catch (error) {
@@ -63,7 +63,7 @@ export async function updateUserHandler(
   const { sub: requesterId } = res.locals.user;
 
   try {
-    const user = await updateUser({ requesterId, id, ...body });
+    const user = await updateUser(requesterId, { id, ...body });
 
     res.status(StatusCodes.OK).json(user);
   } catch (error) {

@@ -8,27 +8,34 @@ const routes = Router();
 
 /**
  * @openapi
- * '/api/users/{userId}':
- *  get:
+ * '/api/v1/sessions':
+ *  post:
  *     tags:
- *     - Users
- *     summary: Get a single product by the userId
- *     security:
- *      - bearerAuth: []
- *     parameters:
- *      - name: userId
- *        in: path
- *        description: The id of the product
- *        required: true
+ *     - Sessions
+ *     summary: Create a session
+ *     description: Authenticates the user and returns a valid token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateSessionInput'
  *     responses:
- *       200:
- *         description: Success
+ *       201:
+ *         description: Created
  *         content:
  *          application/json:
  *           schema:
- *              $ref: '#/components/schemas/User'
- *       404:
- *         description: Product not found
+ *              $ref: '#/components/schemas/CreateSessionResponse'
+ *       401:
+ *         description: Unhautorized
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: Invalid cpf or password
  */
 
 routes

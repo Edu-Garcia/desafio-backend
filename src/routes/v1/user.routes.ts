@@ -19,17 +19,65 @@ const routes = Router();
 
 /**
  * @openapi
- * '/api/users/{userId}':
+ * '/api/v1/users':
  *  get:
  *     tags:
  *     - Users
- *     summary: Get a single product by the userId
- *     security:
- *      - bearerAuth: []
+ *     summary: Get all registered users
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *          application/json:
+ *           schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/CreateUserInput'
+ *  post:
+ *     tags:
+ *     - Users
+ *     summary: Create a user
+ *     description: Only admins can create other users.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateUserInput'
+ *     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *          application/json:
+ *           schema:
+ *              $ref: '#/components/schemas/CreateUserResponse'
+ *       401:
+ *         description: Unhautorized
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 401
+ *             message: Only admins can create users
+ *       409:
+ *         description: Conflict
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 409
+ *             message: Cpf already exists
+ * '/api/v1/users/{userId}':
+ *  get:
+ *     tags:
+ *     - Users
+ *     summary: Get a single user by the userId
  *     parameters:
  *      - name: userId
  *        in: path
- *        description: The id of the product
+ *        description: The id of the user
  *        required: true
  *     responses:
  *       200:
@@ -37,9 +85,82 @@ const routes = Router();
  *         content:
  *          application/json:
  *           schema:
- *              $ref: '#/components/schemas/User'
+ *              $ref: '#/components/schemas/CreateUserResponse'
  *       404:
- *         description: Product not found
+ *         description: Not Found
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: User not found
+ *  delete:
+ *     tags:
+ *     - Users
+ *     summary: Delete user by the userId
+ *     description: Only admins can delete other users.
+ *     parameters:
+ *      - name: userId
+ *        in: path
+ *        description: The id of the user
+ *        required: true
+ *     responses:
+ *       204:
+ *         description: No Content
+ *       401:
+ *         description: Unhautorized
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: Only admins can delete users
+ *       404:
+ *         description: Not Found
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: User not found
+ *  put:
+ *     tags:
+ *     - Users
+ *     summary: Update user by the userId
+ *     description: Only admins can update other users.
+ *     parameters:
+ *      - name: userId
+ *        in: path
+ *        description: The id of the user
+ *        required: true
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *          application/json:
+ *           schema:
+ *              $ref: '#/components/schemas/CreateUserResponse'
+ *       401:
+ *         description: Unhautorized
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: Only admins can delete users
+ *       404:
+ *         description: Not Found
+ *         content:
+ *          application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Error'
+ *           example:
+ *             code: 404
+ *             message: User not found
  */
 
 routes

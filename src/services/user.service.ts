@@ -15,6 +15,11 @@ export async function getUsers(): Promise<UserEntity[]> {
 export async function getUser(id: string): Promise<UserEntity | undefined> {
   const repository = getRepository(UserEntity);
   const user = repository.findOne(id);
+
+  if (!user) {
+    throw new ApiError(StatusCodes.NOT_FOUND, true, 'User not found');
+  }
+
   return user;
 }
 

@@ -3,17 +3,32 @@ import { object, string, InferType } from 'yup';
 /**
  * @openapi
  * components:
- *   schemas:
- *     Session:
- *       type: object
- *       required:
+ *  schemas:
+ *    CreateSessionInput:
+ *      type: object
+ *      required:
  *        - cpf
  *        - password
- *       properties:
- *         cpf:
- *           type: string
- *         password:
- *           type: string
+ *      properties:
+ *        cpf:
+ *          type: string
+ *        password:
+ *          type: string
+ *    CreateSessionResponse:
+ *      type: object
+ *      properties:
+ *        token:
+ *          type: string
+ *        user:
+ *          type: object
+ *          properties:
+ *            id:
+ *              type: string
+ *            permission:
+ *              type: string
+ *              enum:
+ *                - admin
+ *                - user
  */
 
 const payload = {

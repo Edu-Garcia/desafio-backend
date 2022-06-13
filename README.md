@@ -2,7 +2,7 @@
   <img src="https://softdesign.com.br/wp-content/themes/bones/library/images/logotipo.svg" alt="Softdesign logo" />
 </p>
 
-# :rocket: Quickstart NodeJS + Typescript
+# :rocket: Desafio Soft Backend
 
 Esse projeto foi criado utilizando o framework [express]('https://expressjs.com/pt-br/').
 

@@ -4,14 +4,13 @@ import { object, string, InferType, date } from 'yup';
  * @openapi
  * components:
  *   schemas:
- *     User:
+ *     CreateUserInput:
  *       type: object
  *       required:
  *        - name
  *        - password
  *        - birth_date
  *        - cpf
- *        - observations
  *        - permission
  *       properties:
  *         name:
@@ -19,10 +18,10 @@ import { object, string, InferType, date } from 'yup';
  *         password:
  *           type: string
  *         birth_date:
- *           type: Date
  *           format: date
  *         cpf:
  *           type: string
+ *           default: "00000000000"
  *         observations:
  *           type: string
  *         permission:
@@ -30,6 +29,31 @@ import { object, string, InferType, date } from 'yup';
  *           enum:
  *             - admin
  *             - user
+ *     CreateUserResponse:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         password:
+ *           type: string
+ *         birth_date:
+ *           format: date
+ *         cpf:
+ *           type: string
+ *           default: "00000000000"
+ *         observations:
+ *           type: string
+ *         permission:
+ *           type: string
+ *           enum:
+ *             - admin
+ *             - user
+ *         id:
+ *           type: string
+ *         created_at:
+ *           type: string
+ *         updated_at:
+ *           type: string
  */
 
 const payload = {

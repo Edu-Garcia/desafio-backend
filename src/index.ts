@@ -4,6 +4,7 @@ import logger from './config/logger';
 import database from './config/database';
 import swaggerDocs from './config/swagger';
 import app from './app';
+import './config/container';
 
 app.listen(3001, async () => {
   logger.info(`API rodando em http://${config.publicUrl}:${config.port}`);

@@ -1,9 +1,9 @@
-export interface Session {
+export interface ISession {
   cpf: string;
   password: string;
 }
 
-export interface SessionResponse {
+export interface ISessionResponse {
   token: string;
   user: {
     id: string;

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { container } from 'tsyringe';
 import { CreateSessionInput } from '../schemas/session.schema';
-import { createSession } from '../services/session.service';
+import { SessionService } from '../services/session.service';
 import ApiError from '../utils/apiError.utils';
 
 export async function createSessionHandler(
@@ -11,7 +12,9 @@ export async function createSessionHandler(
   const { body } = req;
 
   try {
-    const session = await createSession({ ...body });
+    const sessionService = container.resolve(SessionService);
+
+    const session = await sessionService.createSession({ ...body });
     res.status(StatusCodes.CREATED).json(session);
   } catch (error) {
     if (error instanceof ApiError) {

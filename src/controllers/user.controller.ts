@@ -1,5 +1,7 @@
+import 'reflect-metadata';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { container } from 'tsyringe';
 import {
   CreateUserInput,
   DeleteUserInput,
@@ -7,17 +9,13 @@ import {
   UpdateUserInput,
 } from '../schemas/user.schema';
 
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  getUsers,
-  updateUser,
-} from '../services/user.service';
+import { UserService } from '../services/user.service';
 import ApiError from '../utils/apiError.utils';
 
 export async function getUsersHandler(req: Request, res: Response) {
-  const users = await getUsers();
+  const userService = container.resolve(UserService);
+
+  const users = await userService.getUsers();
 
   res.status(StatusCodes.OK).json(users);
 }
@@ -29,7 +27,9 @@ export async function getUserHandler(
   const { params } = req;
   const { userId: id } = params;
 
-  const user = await getUser(id);
+  const userService = container.resolve(UserService);
+
+  const user = await userService.getUser(id);
 
   res.status(StatusCodes.OK).json(user);
 }
@@ -41,8 +41,10 @@ export async function createUserHandler(
   const { body } = req;
   const { sub: requesterId } = res.locals.user;
 
+  const userService = container.resolve(UserService);
+
   try {
-    const user = await createUser(requesterId, { ...body });
+    const user = await userService.createUser(requesterId, { ...body });
 
     res.status(StatusCodes.CREATED).json(user);
   } catch (error) {
@@ -62,8 +64,10 @@ export async function updateUserHandler(
   const { userId: id } = params;
   const { sub: requesterId } = res.locals.user;
 
+  const userService = container.resolve(UserService);
+
   try {
-    const user = await updateUser(requesterId, { id, ...body });
+    const user = await userService.updateUser(requesterId, { id, ...body });
 
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
@@ -82,8 +86,10 @@ export async function deleteUserHandler(
   const { userId } = req.params;
   const { sub: requesterId } = res.locals.user;
 
+  const userService = container.resolve(UserService);
+
   try {
-    await deleteUser(requesterId, userId);
+    await userService.deleteUser(requesterId, userId);
 
     res.sendStatus(StatusCodes.NO_CONTENT);
   } catch (error) {

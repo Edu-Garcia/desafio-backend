@@ -109,7 +109,7 @@ export class UserService {
       throw new ApiError(StatusCodes.NOT_FOUND, true, 'User not found');
     }
 
-    user.observations = observations || user.observations;
+    user.observations = observations;
     user.permission = permission || user.permission;
 
     await this.usersRepository.save(user);
